@@ -1,5 +1,5 @@
 import { Prisma } from "@prisma/client";
-import { IsEmail, IsEnum, IsNotEmpty, IsNumber, IsString, MinLength, ValidateIf } from "class-validator";
+import { IsEmail, IsEnum, IsNotEmpty, IsNumber, IsString, MinLength } from "class-validator";
 
 
 enum typeUser {
