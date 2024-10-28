@@ -1,5 +1,16 @@
-version: '3.8'
 services:
+  app:
+    build: 
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - 3000:3000
+    environment:
+      - DATABASE_URL=postgres://admin:mascotasGoAdmin@mascotasgo-app-db-1:5432/mascotasGoUser?schema=public
+    volumes:
+      - ./src:/home/app/src
+    links:
+      - db
   db:
     image: postgres
     restart: always
