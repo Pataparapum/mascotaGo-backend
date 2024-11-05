@@ -68,7 +68,7 @@ export class userController {
      * @param correo 
      * @returns String
      */
-    @Delete('') 
+    @Delete(':correo') 
     @UseGuards(JwtAuthGuard)
     deleteUser(@Param('correo') correo:string): Promise<string> {
         return this.database.deleteUser(correo);
