@@ -1,6 +1,7 @@
-import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from "@nestjs/common";
+import { Body, Controller, Delete, Get, Param, Post, Put, Res, UseGuards } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { UserDto, UserDtoReturn} from "../dto/user.dto";
+import { Response } from "express";
 
 
 @Controller('user')
@@ -13,8 +14,8 @@ export class userController {
      * @returns Promise<UserDtoReturn[]>
      */
     @Get()
-    getUser(): Promise<UserDtoReturn[]> {
-        return this.database.getUser();
+    getUser(@Res() response:Response): Promise<Response> {
+        return this.database.getUser(response);
     }
 
     /**
@@ -23,8 +24,8 @@ export class userController {
      * @returns Promise<UserDtoReturn>
      */
     @Get(':id')
-    getUserWithId(@Param('id') id:string): Promise<UserDtoReturn> {
-        return this.database.getUserWithIdForClient(id);
+    getUserWithId(@Param('id') id:string, @Res() response:Response): Promise<Response> {
+        return this.database.getUserWithIdForClient(response, id);
     }
 
     /**
@@ -34,8 +35,8 @@ export class userController {
      * @returns Promise<UserDto>
      */
     @Get('login/:correo')
-    getUserWithCorreo(@Param('correo') correo:string):Promise<UserDto> {
-        return this.database.getUserWithCorreoForAuth(correo);
+    getUserWithCorreo(@Param('correo') correo:string, @Res() response:Response):Promise<Response> {
+        return this.database.getUserWithCorreoForAuth(response, correo);
     }
 
     /**
@@ -44,8 +45,8 @@ export class userController {
      * @returns Promise<UserDto>
      */
     @Post()
-    addUser(@Body() body:UserDto): Promise<UserDto> {
-        return  this.database.registerUser(body);
+    addUser(@Body() body:UserDto, @Res() response:Response): Promise<Response> {
+        return this.database.registerUser(response, body);
     }
 
     /**
@@ -55,8 +56,8 @@ export class userController {
      * @returns Promise<UserDto>
      */
     @Put(':correo')
-    updateUser(@Param('correo') correo:string , @Body() Body:UserDto ): Promise<UserDto> {
-        return this.database.updateUser(correo, Body);
+    updateUser(@Param('correo') correo:string, @Body() Body:UserDto, @Res() response:Response ): Promise<Response> {
+        return this.database.updateUser(response, correo, Body);
     }
 
     /**
@@ -65,8 +66,8 @@ export class userController {
      * @returns String
      */
     @Delete(':correo') 
-    deleteUser(@Param('correo') correo:string): Promise<string> {
-        return this.database.deleteUser(correo);
+    deleteUser(@Param('correo') correo:string, @Res() response:Response): Promise<Response> {
+        return this.database.deleteUser(response, correo);
     }
 
 }

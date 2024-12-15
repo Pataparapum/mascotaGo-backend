@@ -1,3 +1,4 @@
+import { Response } from 'express';
 import {Injectable} from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { UserDto, UserDtoReturn } from '../dto/user.dto';
@@ -13,12 +14,14 @@ export class UserService {
      * @param user 
      * @returns 
      */
-    async registerUser(user:UserDto): Promise<UserDto> {
+    async registerUser(respones:Response, user:UserDto): Promise<Response> {
         const { password }  = user
         const plainTextTohash = await hash(password, 10)
         user = {...user, password:plainTextTohash};
 
-        return this.prisma.user.create({data:user})
+        await this.prisma.user.create({data:user})
+
+        return respones.json({message:"usuario creado"});
     }
 
     /**
@@ -26,15 +29,19 @@ export class UserService {
      * de todos los usuarios
      * @returns 
      */
-    getUser(): Promise<UserDtoReturn[]> {
-        return this.prisma.user.findMany({
+    async getUser(response:Response): Promise<Response> {
+        await this.prisma.user.findMany({
             select: {
                 id:true,
                 username: true,
                 correo:true,
                 numero_mascotas: true,
             }
+        }).catch(err => {
+            return response.json(err);
         });
+
+        return response.json({message:"usuario creado"})
     }
 
     /**
@@ -44,8 +51,8 @@ export class UserService {
      * @param id 
      * @returns 
      */
-    getUserWithIdForClient(id:string): Promise<UserDtoReturn> {
-        return this.prisma.user.findUnique({
+    async getUserWithIdForClient(response:Response, id:string): Promise<Response> {
+        const data = await this.prisma.user.findUnique({
             where: {
                 id: id,
             },
@@ -54,7 +61,12 @@ export class UserService {
                 correo: true,
                 numero_mascotas: true
             }
+        }).catch(err => {
+            return response.json(err)
         });
+
+        return response.json({data})
+
     }
 
     /**
@@ -63,12 +75,16 @@ export class UserService {
      * @param correo 
      * @returns 
      */
-    getUserWithCorreoForAuth(correo:string): Promise<UserDto> {
-        return this.prisma.user.findUnique({
+    async getUserWithCorreoForAuth(response:Response, correo:string): Promise<Response> {
+        const data = await this.prisma.user.findUnique({
             where:{
                 correo: correo
             }
-        })
+        }).catch(err => {
+            return response.json(err);
+        });
+
+        return response.json(data)
     }
 
     /**
@@ -78,8 +94,8 @@ export class UserService {
      * @param newUser 
      * @returns 
      */
-    async updateUser(correo:string, newUser:UserDto ) {
-        return this.prisma.user.update({
+    async updateUser(response:Response, correo:string, newUser:UserDto ): Promise<Response> {
+            await this.prisma.user.update({
             where: {
                 correo: correo,
             },
@@ -87,7 +103,11 @@ export class UserService {
                 username: newUser.username,
                 correo: newUser.correo,
             },
+        }).catch(err => {
+            return response.json(err);
         });
+
+        return response.json({message:"usuario actualizado"});
     }
 
     /**
@@ -95,14 +115,16 @@ export class UserService {
      * @param correo 
      * @returns 
      */
-    async deleteUser(correo:string): Promise<string> {
+    async deleteUser(response:Response, correo:string): Promise<Response> {
         await this.prisma.user.delete({
             where: {
                 correo: correo
             }
+        }).catch(err => {
+            return response.json(err)
         })
     
-        return `El usuario de correo ${correo} fue eliminado`;
+        return response.json({message:"el usuario ha sido eliminado"});
     }
     
 }
