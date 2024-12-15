@@ -1,7 +1,6 @@
 import { Body, Controller, Delete, Get, Param, Post, Put, UseGuards } from "@nestjs/common";
 import { UserService } from "./user.service";
 import { UserDto, UserDtoReturn} from "../dto/user.dto";
-import { JwtAuthGuard } from "../login/jwt/jwt.guard";
 
 
 @Controller('user')
@@ -14,7 +13,6 @@ export class userController {
      * @returns Promise<UserDtoReturn[]>
      */
     @Get()
-    @UseGuards(JwtAuthGuard)
     getUser(): Promise<UserDtoReturn[]> {
         return this.database.getUser();
     }
@@ -25,7 +23,6 @@ export class userController {
      * @returns Promise<UserDtoReturn>
      */
     @Get(':id')
-    @UseGuards(JwtAuthGuard)
     getUserWithId(@Param('id') id:string): Promise<UserDtoReturn> {
         return this.database.getUserWithIdForClient(id);
     }
@@ -58,7 +55,6 @@ export class userController {
      * @returns Promise<UserDto>
      */
     @Put(':correo')
-    @UseGuards(JwtAuthGuard)
     updateUser(@Param('correo') correo:string , @Body() Body:UserDto ): Promise<UserDto> {
         return this.database.updateUser(correo, Body);
     }
@@ -69,7 +65,6 @@ export class userController {
      * @returns String
      */
     @Delete(':correo') 
-    @UseGuards(JwtAuthGuard)
     deleteUser(@Param('correo') correo:string): Promise<string> {
         return this.database.deleteUser(correo);
     }
