@@ -30,7 +30,7 @@ export class UserService {
      * @returns 
      */
     async getUser(response:Response): Promise<Response> {
-        await this.prisma.user.findMany({
+        const data = await this.prisma.user.findMany({
             select: {
                 id:true,
                 username: true,
@@ -41,7 +41,7 @@ export class UserService {
             return response.json(err);
         });
 
-        return response.json({message:"usuario creado"})
+        return response.json(data)
     }
 
     /**
